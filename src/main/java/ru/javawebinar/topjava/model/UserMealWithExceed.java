@@ -8,19 +8,21 @@ import java.time.format.DateTimeFormatter;
  * 11.01.2015.
  */
 public class UserMealWithExceed {
-    private final int id;
+    private final Integer id;
 
-    protected final LocalDateTime dateTime;
+    private final LocalDateTime dateTime;
 
-    protected final String description;
+    private final String description;
 
-    protected final int calories;
+    private final int calories;
 
-    protected final boolean exceed;
+    private final boolean exceed;
 
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    public UserMealWithExceed(LocalDateTime dateTime, String description, int calories, boolean exceed) {
+        this(null, dateTime, description, calories, exceed);
+    }
 
-    public UserMealWithExceed(int id, LocalDateTime dateTime, String description, int calories, boolean exceed) {
+    public UserMealWithExceed(Integer id, LocalDateTime dateTime, String description, int calories, boolean exceed) {
         this.id = id;
 
         this.dateTime = dateTime;
@@ -43,10 +45,6 @@ public class UserMealWithExceed {
         return dateTime;
     }
 
-    public String getFormattedDateTime() {
-        return dateTime.format(formatter);
-    }
-
     public String getDescription() {
         return description;
     }
@@ -59,7 +57,7 @@ public class UserMealWithExceed {
         return exceed;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 }

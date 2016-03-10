@@ -7,19 +7,19 @@
     <jsp:include page="resources/fragments/header.jsp" />
 </head>
 <body>
-    <c:if test="${!empty userMeal}">
-        <c:set var="description" value="${userMeal.description}"/>
-        <c:set var="dateTime" value="${userMeal.dateTime}"/>
-        <c:set var="calories" value="${userMeal.calories}"/>
-        <c:set var="id" value="${userMeal.id}"/>
+    <c:if test="${!empty meal}">
+        <c:set var="description" value="${meal.description}"/>
+        <c:set var="dateTime" value="${meal.dateTime}"/>
+        <c:set var="calories" value="${meal.calories}"/>
+        <c:set var="id" value="${meal.id}"/>
     </c:if>
-    <c:if test="${empty userMeal}">
+    <c:if test="${empty meal}">
         <c:set var="description" value=""/>
         <c:set var="dateTime" value=""/>
         <c:set var="calories" value=""/>
-        <c:set var="id" value="-1"/>
-
+        <c:set var="id" value=""/>
     </c:if>
+
     <div class="container">
         <div class="row">
             <div class="col-md-4 col-md-offset-4">
@@ -48,7 +48,7 @@
                     </div>
                     <div class="form-group">
                         <div class="col-sm-offset-3 col-sm-9">
-                            <button type="submit" class="btn btn-default" formaction="meals-confirm">Submit</button>
+                            <button type="submit" class="btn btn-default">Submit</button>
                         </div>
                     </div>
                 </form>

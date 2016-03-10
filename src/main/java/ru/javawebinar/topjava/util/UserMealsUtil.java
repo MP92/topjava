@@ -15,6 +15,9 @@ import java.util.stream.Collectors;
  * 31.05.2015.
  */
 public class UserMealsUtil {
+
+    private static final int DEFAULT_CALORIES_PER_DAY = 2000;
+
     public static void main(String[] args) {
         List<UserMeal> mealList = Arrays.asList(
                 new UserMeal(0, LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500),
@@ -24,13 +27,17 @@ public class UserMealsUtil {
                 new UserMeal(4, LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500),
                 new UserMeal(5, LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510)
         );
-        List<UserMealWithExceed> filteredMealsWithExceeded = getFilteredMealsWithExceeded(mealList, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
+        List<UserMealWithExceed> filteredMealsWithExceeded = getFilteredWithExceeded(mealList, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
         filteredMealsWithExceeded.forEach(System.out::println);
 
-        System.out.println(getFilteredMealsWithExceededByCycle(mealList, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
+        System.out.println(getFilteredWithExceededByCycle(mealList, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
     }
 
-    public static List<UserMealWithExceed> getFilteredMealsWithExceeded(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+    public static List<UserMealWithExceed> getWithExceeded(Collection<UserMeal> mealList) {
+        return getFilteredWithExceeded(mealList, LocalTime.MIN, LocalTime.MAX, DEFAULT_CALORIES_PER_DAY);
+    }
+
+    public static List<UserMealWithExceed> getFilteredWithExceeded(Collection<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         Map<LocalDate, Integer> caloriesSumByDate = mealList.stream()
                 .collect(
                         Collectors.groupingBy(um -> um.getDateTime().toLocalDate(),
@@ -43,7 +50,7 @@ public class UserMealsUtil {
                 .collect(Collectors.toList());
     }
 
-    public static List<UserMealWithExceed> getFilteredMealsWithExceededByCycle(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+    public static List<UserMealWithExceed> getFilteredWithExceededByCycle(Collection<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
 
         final Map<LocalDate, Integer> caloriesSumPerDate = new HashMap<>();
         mealList.forEach(meal -> caloriesSumPerDate.merge(meal.getDateTime().toLocalDate(), meal.getCalories(), Integer::sum));

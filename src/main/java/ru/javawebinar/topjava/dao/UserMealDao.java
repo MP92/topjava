@@ -2,16 +2,14 @@ package ru.javawebinar.topjava.dao;
 
 import ru.javawebinar.topjava.model.UserMeal;
 
-import java.util.List;
+import java.util.Collection;
 
 public interface UserMealDao {
-    UserMeal findUserMealById(int id);
+    UserMeal findById(int id);
 
-    List<UserMeal> findAllUserMeals();
+    Collection<UserMeal> findAll();
 
-    void addUserMeal(UserMeal userMeal);
+    void save(UserMeal userMeal);
 
-    void updateUserMeal(UserMeal userMeal);
-
-    boolean deleteUserMealById(int id);
+    boolean deleteById(int id);
 }
