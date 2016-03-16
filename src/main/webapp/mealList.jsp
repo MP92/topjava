@@ -17,10 +17,30 @@
 </head>
 <body>
 <section>
-    <h2><a href="index.html">Home</a></h2>
+    <jsp:useBean id="loggedUser" scope="session" class="ru.javawebinar.topjava.LoggedUser"/>
+
+    <h2><a href="index.jsp">Home</a></h2>
+    <h1>User id: ${loggedUser.id}</h1>
     <h3>Meal list</h3>
     <a href="meals?action=create">Add Meal</a>
     <hr>
+    <form action="meals" method="get">
+        <input type="hidden" name="action" value="filter">
+
+        <div style="display:inline-block; width:25%;">
+            <label>Start date: <input name="startDate" type="date"></label><br>
+            <label>Start time: <input name="startTime" type="time"></label>
+
+        </div>
+        <div style="display:inline-block; width:25%; margin-left:10%">
+            <label>End date: <input name="endDate" type="date"></label><br>
+            <label>End time: <input name="endTime" type="time"></label>
+        </div>
+        <br>
+        <form-group>
+            <button type="submit">Filter</button>
+        </form-group>
+    </form>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
         <tr>

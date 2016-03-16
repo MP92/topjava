@@ -7,11 +7,11 @@ package ru.javawebinar.topjava.util.exception;
  */
 public class ExceptionUtil {
     public static void check(boolean found, int id) {
-        check(found, "id=" + id);
+        check(found, "Not found entity with id=" + id);
     }
 
     public static <T> T check(T object, int id) {
-        return check(object, "id=" + id);
+        return check(object, "Not found entity with id=" + id);
     }
 
     public static <T> T check(T object, String msg) {
@@ -20,6 +20,6 @@ public class ExceptionUtil {
     }
 
     public static void check(boolean found, String msg) {
-        if (!found) throw new NotFoundException("Not found entity with " + msg);
+        if (!found) throw new NotFoundException(msg);
     }
 }

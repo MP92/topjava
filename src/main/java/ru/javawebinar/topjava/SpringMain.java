@@ -23,14 +23,11 @@ public class SpringMain {
         // java 7 Automatic resource management
         try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml")) {
             UserMealRestController controller = appCtx.getBean(UserMealRestController.class);
-
+            System.out.println("-----All meals-----");
             controller.getAll().forEach(System.out::println);
-
-            UserMeal meal = new UserMeal(1, LocalDateTime.now(), "HELLO", 12);
-
-            controller.update(meal);
-
-            controller.getAll().forEach(System.out::println);
+            System.out.println("-----Meal id = 1-----");
+            UserMeal meal = controller.get(1);
+            System.out.println(meal);
         }
     }
 }

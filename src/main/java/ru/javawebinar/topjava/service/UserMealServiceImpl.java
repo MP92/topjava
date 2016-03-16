@@ -7,13 +7,10 @@ import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.UserMeal;
 import ru.javawebinar.topjava.repository.UserMealRepository;
 import ru.javawebinar.topjava.util.exception.ExceptionUtil;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * GKislin
@@ -33,27 +30,33 @@ public class UserMealServiceImpl implements UserMealService {
     }
 
     @Override
-    public void delete(int userId, int id) throws NotFoundException {
-        ExceptionUtil.check(repository.delete(userId, id), id);
+    public void delete(int userId, int mealId) {
+        ExceptionUtil.check(repository.delete(userId, mealId), "UserMeal with id=" +
+                            mealId + " for user with id=" + userId + " not found");
     }
 
     @Override
-    public UserMeal get(int userId, int id) throws NotFoundException {
-        return ExceptionUtil.check(repository.get(userId, id), id);
+    public UserMeal get(int userId, int mealId) {
+        return ExceptionUtil.check(repository.get(userId, mealId), "UserMeal with id=" +
+                                    mealId + " for user with id=" + userId + " not found");
     }
 
     @Override
-    public Collection<UserMeal> getAll(int userId) {
-        return repository.getAll(userId);
+    public List<UserMeal> getAll(int userId) {
+        List<UserMeal> result = repository.getAll(userId);
+        return result != null ? result : Collections.emptyList();
     }
 
     @Override
-    public Collection<UserMeal> getFiltered(int userId, LocalDateTime startDT, LocalDateTime endDT) {
-        return repository.getFiltered(userId, startDT, endDT);
+    public List<UserMeal> getFiltered(int userId, LocalDate startDate, LocalDate endDate) {
+        List<UserMeal> result = repository.getFiltered(userId, startDate, endDate);
+        return result != null ? result : Collections.emptyList();
     }
 
     @Override
     public void update(int userId, UserMeal userMeal) {
-        repository.save(userId, userMeal);
+        ExceptionUtil.check(userMeal.getId(), "Missing userMeal id");
+        ExceptionUtil.check(repository.save(userId, userMeal),
+                "Can't find meals owner with userId=" + userId);
     }
 }

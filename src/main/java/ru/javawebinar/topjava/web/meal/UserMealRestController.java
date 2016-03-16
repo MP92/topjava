@@ -8,10 +8,12 @@ import ru.javawebinar.topjava.LoggedUser;
 import ru.javawebinar.topjava.model.UserMeal;
 import ru.javawebinar.topjava.to.UserMealWithExceed;
 import ru.javawebinar.topjava.service.UserMealService;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.UserMealsUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collection;
 
 /**
@@ -27,6 +29,8 @@ public class UserMealRestController {
     private UserMealService service;
 
     public UserMeal create(UserMeal userMeal) {
+        userMeal.setId(null);
+
         LOG.info("create " + userMeal);
 
         return service.save(LoggedUser.id(), userMeal);
@@ -56,9 +60,17 @@ public class UserMealRestController {
         return service.get(LoggedUser.id(), mealId);
     }
 
-    public Collection<UserMealWithExceed> getFiltered(LocalDateTime startDT, LocalDateTime endDT) {
-        LOG.info("getFiltered");
+    public Collection<UserMealWithExceed> getFiltered(String startDate, String endDate,
+                                                      String startTime, String endTime) {
 
-        return UserMealsUtil.getWithExceeded(service.getFiltered(LoggedUser.id(), startDT, endDT), LoggedUser.getCaloriesPerDay());
+        LocalDate startD = DateTimeUtil.parseOrDefault(startDate, LocalDate.MIN);
+        LocalDate endD = DateTimeUtil.parseOrDefault(endDate, LocalDate.MAX);
+        LocalTime startT = DateTimeUtil.parseOrDefault(startTime, LocalTime.MIN);
+        LocalTime endT = DateTimeUtil.parseOrDefault(endTime, LocalTime.MAX);
+
+        LOG.info("getFiltered startDate: " + startD + "\nendDate: " + endD +
+                 "\nstartTime: " + startT + "\nendTime: " + endT);
+
+        return UserMealsUtil.getFilteredWithExceeded(service.getFiltered(LoggedUser.id(), startD, endD), startT, endT, LoggedUser.getCaloriesPerDay());
     }
 }
