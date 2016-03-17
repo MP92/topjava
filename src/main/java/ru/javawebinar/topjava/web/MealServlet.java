@@ -38,17 +38,20 @@ public class MealServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws javax.servlet.ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        String id = request.getParameter("id");
-        UserMeal userMeal = new UserMeal(id.isEmpty() ? null : Integer.valueOf(id),
-                LocalDateTime.parse(request.getParameter("dateTime")),
-                request.getParameter("description"),
-                Integer.valueOf(request.getParameter("calories")));
+
+        UserMeal userMeal = new UserMeal(LocalDateTime.parse(request.getParameter("dateTime")),
+                                         request.getParameter("description"),
+                                         Integer.valueOf(request.getParameter("calories")));
+
         LOG.info(userMeal.isNew() ? "Create {}" : "Update {}", userMeal);
-        if (userMeal.isNew()) {
+
+        String id = request.getParameter("id");
+        if (id.isEmpty()) {
             controller.create(userMeal);
         } else {
-            controller.update(userMeal);
+            controller.update(userMeal, Integer.valueOf(id));
         }
+
         response.sendRedirect("meals");
     }
 
@@ -60,14 +63,14 @@ public class MealServlet extends HttpServlet {
             request.setAttribute("mealList", controller.getAll());
             request.getRequestDispatcher("/mealList.jsp").forward(request, response);
         } else if ("filter".equals(action)) {
-            String startDate = request.getParameter("startDate");
-            String endDate = request.getParameter("endDate");
-            String startTime = request.getParameter("startTime");
-            String endTime = request.getParameter("endTime");
+            String startDate = getAttributedParameter("startDate", request);
+            String endDate = getAttributedParameter("endDate", request);
+            String startTime = getAttributedParameter("startTime", request);
+            String endTime = getAttributedParameter("endTime", request);
 
-            LOG.info("getFiltered date [{}, {}], time [{}, {}]", startDate, endDate, startTime, endTime);
+            LOG.info("getBetween date [{}, {}], time [{}, {}]", startDate, endDate, startTime, endTime);
 
-            request.setAttribute("mealList", controller.getFiltered(startDate, endDate, startTime, endTime));
+            request.setAttribute("mealList", controller.getBetween(startDate, endDate, startTime, endTime));
             request.getRequestDispatcher("/mealList.jsp").forward(request, response);
         } else if (action.equals("delete")) {
             int id = getId(request);
@@ -83,6 +86,12 @@ public class MealServlet extends HttpServlet {
         }
     }
 
+    private String getAttributedParameter(String paramName, HttpServletRequest request) {
+        String paramValue = request.getParameter(paramName);
+        request.setAttribute(paramName, paramValue);
+        return paramValue;
+    }
+
     private int getId(HttpServletRequest request) {
         String paramId = Objects.requireNonNull(request.getParameter("id"));
         return Integer.valueOf(paramId);
@@ -91,5 +100,6 @@ public class MealServlet extends HttpServlet {
     @Override
     public void destroy() {
         appCtx.close();
+        super.destroy();
     }
 }

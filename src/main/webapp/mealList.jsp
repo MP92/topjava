@@ -28,13 +28,13 @@
         <input type="hidden" name="action" value="filter">
 
         <div style="display:inline-block; width:25%;">
-            <label>Start date: <input name="startDate" type="date"></label><br>
-            <label>Start time: <input name="startTime" type="time"></label>
+            <label>Start date: <input name="startDate" type="date" value="${startDate}"></label><br>
+            <label>Start time: <input name="startTime" type="time" value="${startTime}"></label>
 
         </div>
         <div style="display:inline-block; width:25%; margin-left:10%">
-            <label>End date: <input name="endDate" type="date"></label><br>
-            <label>End time: <input name="endTime" type="time"></label>
+            <label>End date: <input name="endDate" type="date" value="${endDate}"></label><br>
+            <label>End time: <input name="endTime" type="time" value="${endTime}"></label>
         </div>
         <br>
         <form-group>

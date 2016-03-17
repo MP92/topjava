@@ -14,7 +14,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * GKislin
@@ -31,46 +31,60 @@ public class UserMealRestController {
     public UserMeal create(UserMeal userMeal) {
         userMeal.setId(null);
 
-        LOG.info("create " + userMeal);
+        int userId = LoggedUser.id();
 
-        return service.save(LoggedUser.id(), userMeal);
+        LOG.info("create " + userMeal + " for user with id=" + userId);
+
+        return service.save(userId, userMeal);
     }
 
     public void delete(int mealId) throws NotFoundException {
-        LOG.info("delete " + mealId);
+        int userId = LoggedUser.id();
 
-        service.delete(LoggedUser.id(), mealId);
+        LOG.info("delete " + mealId + " for user with id=" + userId);
+
+        service.delete(userId, mealId);
     }
 
-    public Collection<UserMealWithExceed> getAll() {
-        LOG.info("getAll");
+    public List<UserMealWithExceed> getAll() {
+        int userId = LoggedUser.id();
 
-        return UserMealsUtil.getWithExceeded(service.getAll(LoggedUser.id()), LoggedUser.getCaloriesPerDay());
+        LOG.info("getAll for user with id=" + userId);
+
+        return UserMealsUtil.getWithExceeded(service.getAll(userId), LoggedUser.getCaloriesPerDay());
     }
 
-    public void update(UserMeal userMeal) {
-        LOG.info("update " + userMeal);
+    public void update(UserMeal userMeal, int mealId) {
+        userMeal.setId(mealId);
 
-        service.update(LoggedUser.id(), userMeal);
+        int userId = LoggedUser.id();
+
+        LOG.info("update " + userMeal + " for user with id=" + userId);
+
+        service.update(userId, userMeal);
     }
 
     public UserMeal get(int mealId) throws NotFoundException {
-        LOG.info("get " + mealId);
+        int userId = LoggedUser.id();
 
-        return service.get(LoggedUser.id(), mealId);
+        LOG.info("get " + mealId + " for user with id=" + userId);
+
+        return service.get(userId, mealId);
     }
 
-    public Collection<UserMealWithExceed> getFiltered(String startDate, String endDate,
-                                                      String startTime, String endTime) {
+    public List<UserMealWithExceed> getBetween(String startDate, String endDate,
+                                               String startTime, String endTime) {
 
-        LocalDate startD = DateTimeUtil.parseOrDefault(startDate, LocalDate.MIN);
-        LocalDate endD = DateTimeUtil.parseOrDefault(endDate, LocalDate.MAX);
+        LocalDate startD = DateTimeUtil.parseOrDefault(startDate, DateTimeUtil.DATE_MIN);
+        LocalDate endD = DateTimeUtil.parseOrDefault(endDate, DateTimeUtil.DATE_MAX);
         LocalTime startT = DateTimeUtil.parseOrDefault(startTime, LocalTime.MIN);
         LocalTime endT = DateTimeUtil.parseOrDefault(endTime, LocalTime.MAX);
 
-        LOG.info("getFiltered startDate: " + startD + "\nendDate: " + endD +
-                 "\nstartTime: " + startT + "\nendTime: " + endT);
+        int userId = LoggedUser.id();
 
-        return UserMealsUtil.getFilteredWithExceeded(service.getFiltered(LoggedUser.id(), startD, endD), startT, endT, LoggedUser.getCaloriesPerDay());
+        LOG.info("getBetween startDate: " + startD + "\nendDate: " + endD +
+                 "\nstartTime: " + startT + "\nendTime: " + endT + " for user with id=" + userId);
+
+        return UserMealsUtil.getFilteredWithExceeded(service.getBetweenDates(userId, startD, endD), startT, endT, LoggedUser.getCaloriesPerDay());
     }
 }
