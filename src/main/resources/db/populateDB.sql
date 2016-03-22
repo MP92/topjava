@@ -11,3 +11,15 @@ VALUES ('Admin', 'admin@gmail.com', 'admin');
 INSERT INTO user_roles (role, user_id) VALUES
   ('ROLE_USER', 100000),
   ('ROLE_ADMIN', 100001);
+
+
+DELETE FROM user_meals;
+
+ALTER SEQUENCE meal_seq RESTART WITH 200000;
+
+INSERT INTO user_meals (user_id, datetime, description, calories) VALUES
+  (100000, '2015-05-30 10:00:00', 'Завтрак', 500),
+  (100000, '2015-05-30 13:00:00', 'Обед', 1000),
+  (100001, '2015-06-01 14:00:00', 'Админ ланч', 510),
+  (100001, '2015-06-01 21:00:00', 'Админ ужин', 1500);
+

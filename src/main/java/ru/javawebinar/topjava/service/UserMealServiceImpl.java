@@ -41,6 +41,7 @@ public class UserMealServiceImpl implements UserMealService {
 
     @Override
     public UserMeal update(UserMeal meal, int userId) {
+        ExceptionUtil.check(meal.getId(), "null id");
         return ExceptionUtil.check(repository.save(meal, userId), meal.getId());
     }
 
