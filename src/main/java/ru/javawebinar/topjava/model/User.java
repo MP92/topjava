@@ -55,6 +55,9 @@ public class User extends NamedEntity {
     @Digits(fraction = 0, integer = 4)
     protected int caloriesPerDay = UserMealsUtil.DEFAULT_CALORIES_PER_DAY;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    protected Set<UserMeal> meals;
+
     public User() {
     }
 
