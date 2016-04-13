@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +22,9 @@ abstract public class AbstractUserServiceTest extends AbstractServiceTest {
     @Autowired
     protected UserService service;
 
-    @Autowired
-    protected JpaUtil jpaUtil;
-
     @Before
     public void setUp() throws Exception {
         service.evictCache();
-        jpaUtil.clear2ndLevelHibernateCache();
     }
 
     @Test
@@ -38,8 +35,9 @@ abstract public class AbstractUserServiceTest extends AbstractServiceTest {
         MATCHER.assertCollectionEquals(Arrays.asList(ADMIN, tu, USER), service.getAll());
     }
 
-    @Test(expected = DataAccessException.class)
+    @Test
     public void testDuplicateMailSave() throws Exception {
+        thrown.expect(DataAccessException.class);
         service.save(new TestUser("Duplicate", "user@yandex.ru", "newPass", Role.ROLE_USER).asUser());
     }
 
@@ -57,13 +55,13 @@ abstract public class AbstractUserServiceTest extends AbstractServiceTest {
     @Test
     public void testGet() throws Exception {
         User user = service.get(USER_ID);
-        user = service.get(USER_ID);
 
         MATCHER.assertEquals(USER, user);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void testGetNotFound() throws Exception {
+        thrown.expect(NotFoundException.class);
         service.get(1);
     }
 
@@ -71,6 +69,12 @@ abstract public class AbstractUserServiceTest extends AbstractServiceTest {
     public void testGetByEmail() throws Exception {
         User user = service.getByEmail("user@yandex.ru");
         MATCHER.assertEquals(USER, user);
+    }
+
+    @Test
+    public void testGetByEmailNotFound() throws Exception {
+        thrown.expect(NotFoundException.class);
+        User user = service.getByEmail("blablabla@yandex.ru");
     }
 
     @Test
@@ -84,7 +88,15 @@ abstract public class AbstractUserServiceTest extends AbstractServiceTest {
         TestUser updated = new TestUser(USER);
         updated.setName("UpdatedName");
         updated.setCaloriesPerDay(330);
+        updated.addRole(Role.ROLE_ADMIN);
         service.update(updated.asUser());
         MATCHER.assertEquals(updated, service.get(USER_ID));
+    }
+
+    @Test
+    public void testRoles() throws Exception {
+        User admin = service.get(ADMIN_ID);
+
+        Assert.assertTrue(ADMIN_ROLES.equals(admin.getRoles()));
     }
 }

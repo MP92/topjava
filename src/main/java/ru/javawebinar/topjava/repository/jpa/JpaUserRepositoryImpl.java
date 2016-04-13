@@ -6,6 +6,7 @@ import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
@@ -60,11 +61,16 @@ public class JpaUserRepositoryImpl implements UserRepository {
 
     @Override
     public User getByEmail(String email) {
-        return em.createNamedQuery(User.BY_EMAIL, User.class).setParameter(1, email).getSingleResult();
+        try {
+            return em.createNamedQuery(User.BY_EMAIL, User.class).setParameter(1, email).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override
     public List<User> getAll() {
-        return em.createNamedQuery(User.ALL_SORTED, User.class).getResultList();
+        List<User> resultList = em.createNamedQuery(User.ALL_SORTED, User.class).getResultList();
+        return resultList;
     }
 }
