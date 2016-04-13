@@ -10,10 +10,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.Digits;
-import java.util.Date;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * User: gkislin
@@ -75,6 +73,10 @@ public class User extends NamedEntity {
         this(id, name, email, password, UserMealsUtil.DEFAULT_CALORIES_PER_DAY, true, EnumSet.of(role, roles));
     }
 
+    public User(Integer id, String name, String email, String password, int caloriesPerDay, boolean enabled, Role role, Role... roles) {
+        this(id, name, email, password, caloriesPerDay, enabled, EnumSet.of(role, roles));
+    }
+
     public User(Integer id, String name, String email, String password, int caloriesPerDay, boolean enabled, Set<Role> roles) {
         super(id, name);
         this.email = email;
@@ -129,7 +131,17 @@ public class User extends NamedEntity {
     }
 
     public void addRole(Role role) {
+        if (this.roles == null) {
+            this.roles = new HashSet<>();
+        }
         this.roles.add(role);
+    }
+
+    public void addRoles(Set<Role> roles) {
+        if (this.roles == null) {
+            this.roles = new HashSet<>();
+        }
+        this.roles.addAll(roles.stream().collect(Collectors.toList()));
     }
 
     public String getPassword() {

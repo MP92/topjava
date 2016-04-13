@@ -1,7 +1,6 @@
 package ru.javawebinar.topjava.repository.jdbc;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,11 +15,7 @@ import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
 import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -33,6 +28,24 @@ import java.util.stream.Collectors;
 public class JdbcUserRepositoryImpl implements UserRepository {
 
     private static final BeanPropertyRowMapper<User> ROW_MAPPER = BeanPropertyRowMapper.newInstance(User.class);
+
+    private static final ResultSetExtractor<List<User>> RESULT_SET_EXTRACTOR = rs -> {
+        Map<Integer, User> map = new LinkedHashMap<>();
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            Role role = Role.valueOf(rs.getString("role"));
+
+            User user = map.get(id);
+            if (user != null) {
+                user.addRole(role);
+            } else {
+                user = new User(id, rs.getString("name"), rs.getString("email"), rs.getString("password"),
+                                rs.getInt("calories_per_day"), rs.getBoolean("enabled"), role);
+                map.put(user.getId(), user);
+            }
+        }
+        return new ArrayList<>(map.values());
+    };
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -63,8 +76,7 @@ public class JdbcUserRepositoryImpl implements UserRepository {
                 .addValue("password", user.getPassword())
                 .addValue("registered", user.getRegistered())
                 .addValue("enabled", user.isEnabled())
-                .addValue("caloriesPerDay", user.getCaloriesPerDay())
-                .addValue("roles", user.getRoles());
+                .addValue("caloriesPerDay", user.getCaloriesPerDay());
 
         if (user.isNew()) {
             Number newKey = insertUser.executeAndReturnKey(userMap);
@@ -100,7 +112,7 @@ public class JdbcUserRepositoryImpl implements UserRepository {
             return null;
         }
 
-        return getUserWithRoles(user);
+        return withRoles(user);
     }
 
     @Override
@@ -111,7 +123,7 @@ public class JdbcUserRepositoryImpl implements UserRepository {
             return null;
         }
 
-        return getUserWithRoles(user);
+        return withRoles(user);
     }
 
     private User getByCriterion(String criterionName, Object criterionValue) {
@@ -119,7 +131,7 @@ public class JdbcUserRepositoryImpl implements UserRepository {
         return DataAccessUtils.singleResult(users);
     }
 
-    private User getUserWithRoles(User user) {
+    private User withRoles(User user) {
         List<String> roles = jdbcTemplate.queryForList("SELECT ur.role FROM user_roles ur WHERE ur.user_id=?", String.class, user.getId());
         user.setRoles(roles.stream().map(Role::valueOf).collect(Collectors.toSet()));
         return user;
@@ -127,8 +139,6 @@ public class JdbcUserRepositoryImpl implements UserRepository {
 
     @Override
     public List<User> getAll() {
-        List<User> list = jdbcTemplate.query("SELECT * FROM users ORDER BY name, email", ROW_MAPPER);
-        list.forEach(this::getUserWithRoles);
-        return list;
+        return jdbcTemplate.query("SELECT * FROM users u LEFT JOIN user_roles ur ON u.id=ur.user_id ORDER BY name, email", RESULT_SET_EXTRACTOR);
     }
 }
