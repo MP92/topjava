@@ -52,7 +52,6 @@ abstract public class AbstractUserServiceTest extends AbstractServiceTest {
     @Test
     public void testGet() throws Exception {
         User user = service.get(USER_ID);
-        user = service.get(USER_ID);
 
         MATCHER.assertEquals(USER, user);
     }
