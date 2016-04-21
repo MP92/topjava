@@ -1,7 +1,7 @@
 package ru.javawebinar.topjava.web.user;
 
 import org.junit.Test;
-import ru.javawebinar.topjava.web.AbstractControllerTest;
+import ru.javawebinar.topjava.web.AbstractUserControllerTest;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -14,7 +14,7 @@ import static ru.javawebinar.topjava.model.BaseEntity.START_SEQ;
  * GKislin
  * 10.04.2015.
  */
-public class UserControllerTest extends AbstractControllerTest {
+public class UserControllerTest extends AbstractUserControllerTest {
 
     @Test
     public void testUserList() throws Exception {
