@@ -41,7 +41,7 @@ public class JspUserMealController extends AbstractUserMealController {
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String editForCreate(Model model) {
-        model.addAttribute("meal", new UserMeal(LocalDateTime.now(), "", 1000));
+        model.addAttribute("meal", new UserMeal(/*LocalDateTime.now()*/null, "", 1000));
         return "mealEdit";
     }
 
