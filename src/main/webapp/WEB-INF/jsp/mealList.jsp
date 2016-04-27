@@ -4,7 +4,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 <jsp:include page="fragments/headTag.jsp"/>
-<script type="text/javascript" src="resources/js/mealsDataTable.js"></script>
+<link rel="stylesheet" href="webjars/datatables/1.10.11/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="webjars/datetimepicker/2.5.1/jquery.datetimepicker.css">
 <body>
 <jsp:include page="fragments/bodyHeader.jsp"/>
 <div class="jumbotron">
@@ -30,7 +31,7 @@
                     <label for="endTime">To Time:</label>
                     <input type="time" class="form-control" name="endTime" id="endTime" value="${endTime}">
                 </div>
-                <button class="btn btn-default" type="submit" style="float: right">Filter</button>
+                <button class="btn btn-default pull-right" type="submit">Filter</button>
             </form>
         </div>
 
@@ -72,21 +73,30 @@
                 <h4 class="modal-title" id="editRowLabel"><fmt:message key="meals.edit"/></h4>
             </div>
 
-            <form method="post" id="detailsForm">
+            <form method="post" id="detailsForm" class="form-horizontal">
                 <div class="modal-body">
                     <input type="hidden" name="id" id="id">
 
                     <div class="form-group">
-                        <label for="dateTime">DateTime:</label>
-                        <input type="datetime-local" class="form-control" id="dateTime" name="dateTime">
+                        <label for="dateTime" class="col-sm-2 control-label">DateTime:</label>
+                        <div class="col-sm-10">
+                            <input type="datetime-local" class="form-control" id="dateTime" name="dateTime">
+                        </div>
+
                     </div>
                     <div class="form-group">
-                        <label for="description">Description:</label>
-                        <input type="text" class="form-control" id="description" name="description">
+                        <label for="description" class="col-sm-2 control-label">Description:</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="description" name="description">
+                        </div>
+
                     </div>
                     <div class="form-group">
-                        <label for="calories">Calories:</label>
-                        <input type="number" class="form-control" id="calories" name="calories">
+                        <label for="calories" class="col-sm-2 control-label">Calories:</label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" id="calories" name="calories">
+                        </div>
+
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -97,4 +107,11 @@
     </div>
 </div>
 </body>
+<script type="text/javascript" src="webjars/jquery/2.2.3/jquery.min.js"></script>
+<script type="text/javascript" src="webjars/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="webjars/datetimepicker/2.5.1/jquery.datetimepicker.js"></script>
+<script type="text/javascript" src="webjars/datatables/1.10.11/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="webjars/noty/2.3.8/js/noty/packaged/jquery.noty.packaged.min.js"></script>
+<script type="text/javascript" src="resources/js/datatablesUtil.js"></script>
+<script type="text/javascript" src="resources/js/mealsDataTable.js"></script>
 </html>

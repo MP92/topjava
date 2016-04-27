@@ -18,20 +18,15 @@ function makeEditable() {
         return false;
     });
 
-    $('input[type="checkbox"]').change(function() {
+    $('.user-status').change(function() {
         $.ajax({
-            url: ajaxUrl + 'switch',
+            url: ajaxUrl + $(this).closest('tr').attr('id'),
             type: 'POST',
-            contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-            data: {
-                id: $(this).closest('tr').attr('id'),
-                enabled: $(this).attr('checked') === undefined
-            },
             success: function () {
                 updateTable();
                 successNoty('Updated');
-            },
-        })
+            }
+        });
     });
 
     $(document).ajaxError(function (event, jqXHR, options, jsExc) {
@@ -51,21 +46,13 @@ function deleteRow(id) {
 }
 
 function updateTable() {
-/*    var onSuccessFn = function(data) {
-        datatableApi.fnClearTable();
-        $.each(data, function (key, item) {
-            datatableApi.fnAddData(item);
-        });
-        datatableApi.fnDraw();
-    };*/
-
     var onSuccessFn = function(data) {
         dataTableApi.clear().rows.add(data).draw();
     };
 
     var form = $('#filter-form');
     if (form.length > 0) {
-        $.get(ajaxUrl + "/filter", form.serialize(), onSuccessFn);
+        $.get(ajaxUrl + 'filter', form.serialize(), onSuccessFn);
     } else {
         $.get(ajaxUrl, onSuccessFn);
     }
