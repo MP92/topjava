@@ -33,7 +33,6 @@ public class RootController {
 
     @RequestMapping(value = "/meals", method = RequestMethod.GET)
     public String mealList(Model model) {
-        model.addAttribute("mealList", UserMealsUtil.getWithExceeded(mealService.getAll(LoggedUser.id()), LoggedUser.getCaloriesPerDay()));
         return "mealList";
     }
 

@@ -1,12 +1,17 @@
-package ru.javawebinar.topjava.web.user;
+package ru.javawebinar.topjava.web;
 
 import org.junit.Test;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static ru.javawebinar.topjava.MealTestData.MEAL1;
+import static ru.javawebinar.topjava.MealTestData.MEAL1_ID;
 
 /**
  * GKislin
@@ -27,5 +32,13 @@ public class RootControllerTest extends AbstractControllerTest {
 //                                hasProperty("name", is(USER.getName()))
 //                        )
 //                )));
+    }
+
+    @Test
+    public void testMealList() throws Exception {
+        mockMvc.perform(get("/meals"))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("http://localhost/login"));
     }
 }
