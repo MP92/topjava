@@ -23,7 +23,16 @@ $(function () {
         "info": true,
         "columns": [
             {
-                "data": "dateTime"
+                "data": "dateTime",
+                "render": function(date, type, row) {
+                    if (type == 'display') {
+                        var localISOTime = (new Date(date + 'Z')).toISOString().slice(0,-1);
+
+                        var formattedDate = localISOTime.substring(0, 10) + ' ' + localISOTime.substring(11, 16);
+                        return '<span>' + formattedDate + '</span>';
+                    }
+                    return date;
+                }
             },
             {
                 "data": "description"
