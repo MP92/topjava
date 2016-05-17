@@ -6,22 +6,30 @@
 <html>
 <jsp:include page="fragments/headTag.jsp"/>
 <body>
-<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header navbar-brand"><fmt:message key="app.title"/></div>
-        <div class="navbar-collapse collapse">
-            <form:form class="navbar-form navbar-right" role="form" action="spring_security_check" method="post">
-                <div class="form-group">
-                    <input type="text" placeholder="Email" class="form-control" name='username'>
-                </div>
-                <div class="form-group">
-                    <input type="password" placeholder="Password" class="form-control" name='password'>
-                </div>
-                <button type="submit" class="btn btn-success"><fmt:message key="app.login"/></button>
-            </form:form>
-        </div>
-    </div>
-</div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <div class="navbar-right">
+                <form:form class="navbar-form navbar-left" role="form" action="spring_security_check" method="post">
+                    <div class="form-group">
+                        <input type="text" placeholder="Email" class="form-control" name='username'>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" placeholder="Password" class="form-control" name='password'>
+                    </div>
+                    <button type="submit" class="btn btn-success"><fmt:message key="app.login"/></button>
+                </form:form>
+
+                <jsp:include page="fragments/locale.jsp"/>
+            </div>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
 
 <div class="jumbotron">
     <div class="container">
@@ -79,4 +87,5 @@
 </div>
 <jsp:include page="fragments/footer.jsp"/>
 </body>
+
 </html>

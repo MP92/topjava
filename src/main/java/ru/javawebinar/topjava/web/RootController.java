@@ -1,19 +1,23 @@
 package ru.javawebinar.topjava.web;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.support.SessionStatus;
 import ru.javawebinar.topjava.LoggedUser;
+import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.util.UserUtil;
 import ru.javawebinar.topjava.web.user.AbstractUserController;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * User: gkislin
@@ -60,7 +64,12 @@ public class RootController extends AbstractUserController {
             return "profile";
         } else {
             userTo.setId(LoggedUser.id());
-            super.update(userTo);
+            try {
+                super.update(userTo);
+            } catch (DataIntegrityViolationException e) {
+                result.addError(new FieldError("email", "email", "User with this email already present in application."));
+                return "profile";
+            }
             LoggedUser.get().update(userTo);
             status.setComplete();
             return "redirect:meals";
@@ -80,7 +89,14 @@ public class RootController extends AbstractUserController {
             model.addAttribute("register", true);
             return "profile";
         } else {
-            super.create(UserUtil.createFromTo(userTo));
+            User user = UserUtil.createFromTo(userTo);
+            try {
+                super.create(user);
+            } catch (DataIntegrityViolationException e) {
+                result.addError(new FieldError("email", "email", "User with this email already present in application."));
+                model.addAttribute("register", true);
+                return "profile";
+            }
             status.setComplete();
             return "redirect:login?message=app.registered";
         }
