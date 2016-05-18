@@ -1,5 +1,8 @@
 package ru.javawebinar.topjava.web.user;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,7 +23,10 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/ajax/admin/users")
-public class AdminAjaxController extends AbstractUserController implements ExceptionInfoHandler {
+public class AdminAjaxController extends AbstractUserController {
+
+    @Autowired
+    MessageSource messageSource;
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<User> getAll() {
@@ -38,13 +44,7 @@ public class AdminAjaxController extends AbstractUserController implements Excep
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<String> createOrUpdate(@Valid UserTo userTo, BindingResult result) {
-        if (result.hasErrors()) {
-            StringBuilder sb = new StringBuilder();
-            result.getFieldErrors().forEach(fe -> sb.append(fe.getField()).append(" ").append(fe.getDefaultMessage()).append("<br>"));
-            throw new ValidationException(sb.toString());
-        }
-
+    public void createOrUpdate(@Valid UserTo userTo) {
         try {
             if (userTo.getId() == 0) {
                 super.create(UserUtil.createFromTo(userTo));
@@ -52,10 +52,8 @@ public class AdminAjaxController extends AbstractUserController implements Excep
                 super.update(userTo);
             }
         } catch (DataIntegrityViolationException e) {
-            throw new ValidationException("User with this email already present in application");
+            throw new DataIntegrityViolationException(messageSource.getMessage("exception.duplicate_email", null, LocaleContextHolder.getLocale()));
         }
-
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)

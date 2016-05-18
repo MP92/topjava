@@ -60,20 +60,20 @@ public class RootController extends AbstractUserController {
 
     @RequestMapping(value = "/profile", method = RequestMethod.POST)
     public String updateProfile(@Valid UserTo userTo, BindingResult result, SessionStatus status) {
-        if (result.hasErrors()) {
-            return "profile";
-        } else {
-            userTo.setId(LoggedUser.id());
+        if (!result.hasErrors()) {
             try {
+                userTo.setId(LoggedUser.id());
                 super.update(userTo);
+                LoggedUser.get().update(userTo);
+                status.setComplete();
+
+                return "redirect:meals";
             } catch (DataIntegrityViolationException e) {
-                result.addError(new FieldError("email", "email", "User with this email already present in application."));
-                return "profile";
+                result.rejectValue("email", "exception.duplicate_email");
             }
-            LoggedUser.get().update(userTo);
-            status.setComplete();
-            return "redirect:meals";
         }
+
+        return "profile";
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
@@ -85,20 +85,17 @@ public class RootController extends AbstractUserController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String saveRegister(@Valid UserTo userTo, BindingResult result, SessionStatus status, ModelMap model) {
-        if (result.hasErrors()) {
-            model.addAttribute("register", true);
-            return "profile";
-        } else {
-            User user = UserUtil.createFromTo(userTo);
+        if (!result.hasErrors()) {
             try {
-                super.create(user);
+                super.create(UserUtil.createFromTo(userTo));
+                status.setComplete();
+                return "redirect:login?message=app.registered";
             } catch (DataIntegrityViolationException e) {
-                result.addError(new FieldError("email", "email", "User with this email already present in application."));
-                model.addAttribute("register", true);
-                return "profile";
+                result.rejectValue("email", "exception.duplicate_email");
             }
-            status.setComplete();
-            return "redirect:login?message=app.registered";
         }
+
+        model.addAttribute("register", true);
+        return "profile";
     }
 }

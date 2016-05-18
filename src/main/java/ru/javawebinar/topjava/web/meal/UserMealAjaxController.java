@@ -24,7 +24,7 @@ import static ru.javawebinar.topjava.util.UserMealsUtil.createFromTo;
  */
 @RestController
 @RequestMapping(value = "/ajax/profile/meals")
-public class UserMealAjaxController extends AbstractUserMealController implements ExceptionInfoHandler {
+public class UserMealAjaxController extends AbstractUserMealController {
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<UserMealWithExceed> getAll() {
@@ -42,18 +42,12 @@ public class UserMealAjaxController extends AbstractUserMealController implement
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<String> updateOrCreate(@Valid UserMealTo mealTo, BindingResult result) {
-        if (result.hasErrors()) {
-            StringBuilder sb = new StringBuilder();
-            result.getFieldErrors().forEach(fe -> sb.append(fe.getField()).append(" ").append(fe.getDefaultMessage()).append("<br>"));
-            throw new ValidationException(sb.toString());
-        }
+    public void updateOrCreate(@Valid UserMealTo mealTo) {
         if (mealTo.getId() == 0) {
             super.create(createFromTo(mealTo));
         } else {
             super.update(createFromTo(mealTo), mealTo.getId());
         }
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/filter", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
