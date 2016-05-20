@@ -19,7 +19,7 @@ import javax.validation.ValidationException;
  * User: gkislin
  * Date: 23.09.2014
  */
-@ControllerAdvice(annotations = RestController.class)
+@org.springframework.web.bind.annotation.ControllerAdvice(annotations = {org.springframework.web.bind.annotation.RestController.class})
 public class ExceptionInfoHandler {
     Logger LOG = LoggerFactory.getLogger(ExceptionInfoHandler.class);
 
@@ -53,7 +53,7 @@ public class ExceptionInfoHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    @Order(Ordered.LOWEST_PRECEDENCE)
+    @Order(Ordered.LOWEST_PRECEDENCE - 1)
     public ErrorInfo handleError(HttpServletRequest req, Exception e) {
         return logAndGetErrorInfo(req, e, true);
     }
